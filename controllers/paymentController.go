@@ -1,38 +1,11 @@
 package controllers
 
 import (
-	"net/http"
 	"paymentapi/initializers"
 	"paymentapi/models"
 
 	"github.com/gin-gonic/gin"
 )
-
-func AddPayment(c *gin.Context) {
-
-	var Payment struct {
-		Amount      float64
-		Quantity    float64
-		Description string
-		ItemCode    string
-	}
-
-	c.Bind(&Payment)
-
-	payment := models.Payment{Amount: Payment.Amount, Quantity: Payment.Quantity, Description: Payment.Description, ItemCode: Payment.ItemCode}
-	if err := c.ShouldBindJSON(&payment); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	result := initializers.DB.Create(&payment)
-	if result.Error != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{"data": payment})
-}
 
 // func AddPayment(c *gin.Context) {
 
@@ -46,17 +19,18 @@ func AddPayment(c *gin.Context) {
 // 	c.Bind(&Payment)
 
 // 	payment := models.Payment{Amount: Payment.Amount, Quantity: Payment.Quantity, Description: Payment.Description, ItemCode: Payment.ItemCode}
-
-// 	result := initializers.DB.Create(&payment)
-
-// 	if result.Error != nil {
-// 		c.Status(400)
+// 	if err := c.ShouldBindJSON(&payment); err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 // 		return
 // 	}
 
-// 	c.JSON(200, gin.H{
-// 		"payment": payment,
-// 	})
+// 	result := initializers.DB.Create(&payment)
+// 	if result.Error != nil {
+// 		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+// 		return
+// 	}
+
+// 	c.JSON(http.StatusOK, gin.H{"data": payment})
 // }
 
 //get all payments
