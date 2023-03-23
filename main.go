@@ -53,6 +53,10 @@ func main() {
 	r.GET("/payment/:id", controllers.GetSinglePayment) //get single payment
 	r.DELETE("/payment/:id", controllers.DeletePayment) //get single payment
 
+	r.NoRoute(func(c *gin.Context) {
+		c.JSON(http.StatusNotFound, gin.H{"code": "PAGE_NOT_FOUND", "message": "404 Page Not Found"})
+	})
+
 	r.Run(":3000") // listen and serve on 0.0.0.0:3000 calling the router
 
 }

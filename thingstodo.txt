@@ -1,0 +1,1 @@
+Add default route and response for resource not found

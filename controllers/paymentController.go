@@ -1,10 +1,13 @@
 package controllers
 
 import (
+	"errors"
+	"net/http"
 	"paymentapi/initializers"
 	"paymentapi/models"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 // func AddPayment(c *gin.Context) {
@@ -50,12 +53,47 @@ func GetSinglePayment(c *gin.Context) {
 
 	id := c.Param("id")
 
-	var payment []models.Payment
-	initializers.DB.First(&payment, id)
+	// paymentFound := false
 
-	c.JSON(200, gin.H{
-		"payment": payment,
-	})
+	// paymentNotFound := true
+
+	// var payment []models.Payment
+	// initializers.DB.First(&payment, id)
+
+	// if paymentFound {
+	// 	c.JSON(http.StatusOK, payment)
+	// 	paymentNotFound = false
+	// }
+
+	// if paymentNotFound {
+
+	// 	c.JSON(http.StatusNotFound, gin.H{
+	// 		"code":  "404",
+	// 		"error": "Payment Not Found",
+	// 	})
+	// 	return
+	// }
+
+	// c.JSON(200, gin.H{
+	// 	"payment": payment,
+	// })
+	var payment []models.Payment
+	if err := initializers.DB.First(&payment, id).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			c.JSON(http.StatusNotFound, gin.H{
+				"error": "Payment Not Found",
+			})
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"code":  "500",
+				"error": "Internal Server Error",
+			})
+		}
+		return
+	}
+
+	// payment was found, so return it
+	c.JSON(http.StatusOK, payment)
 
 }
 
